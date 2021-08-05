@@ -1,6 +1,6 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
+import './question.dart';
+import './answer.dart';
 
 // void main() {
 //   runApp(MyApp());
@@ -11,22 +11,37 @@ void main() => runApp(MyApp());
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return MyAppState();
+    return _MyAppState();
   }
 }
 
-class MyAppState extends State<MyApp> {
-  var qIndex = 0;
-  void answerQuestion() {
-    qIndex = qIndex + 1;
-    print(qIndex);
+class _MyAppState extends State<MyApp> {
+  var _qIndex = 0;
+  void _answerQuestion() {
+    setState(() {
+      if (_qIndex < 2) {
+        _qIndex++;
+      } else {
+        _qIndex = 0;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    var questions = [
-      'What is you favorite colour?',
-      'What is your favorite animal?'
+    const questions = const [
+      {
+        'question': 'What is you favorite colour?',
+        'answers': ['Blue', 'Black', 'Red', 'Green'],
+      },
+      {
+        'question': 'What is your favorite animal?',
+        'answers': ['Rabbit', 'Lion', 'Eagle', 'Other'],
+      },
+      {
+        'question': 'What\'s your favourite car?',
+        'answers': ['BMW', 'Honda', 'Porsche', 'Lamborghini'],
+      }
     ];
     return MaterialApp(
       home: Scaffold(
@@ -35,21 +50,12 @@ class MyAppState extends State<MyApp> {
         ),
         body: Column(
           children: [
-            Text(questions[qIndex]),
-            RaisedButton(
-              child: Text('Answer 1'),
-              onPressed: answerQuestion,
+            Question(
+              (questions[_qIndex]['question'] as String),
             ),
-            RaisedButton(
-              child: Text('Answer 2'),
-              onPressed: () => print('Answer 2 is clicked!'),
-            ),
-            RaisedButton(
-              child: Text('Answer 3'),
-              onPressed: () {
-                print('Question 3 is selected');
-              },
-            ),
+            ...(questions[_qIndex]['answers'] as List<String>).map((answer) {
+              return Answer(_answerQuestion, answer);
+            }).toList()
           ],
         ),
       ),

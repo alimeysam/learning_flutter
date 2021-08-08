@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 // void main() {
 //   runApp(MyApp());
@@ -16,48 +16,58 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final _questions = const [
+    {
+      'question': 'What is you favorite colour?',
+      'answers': [
+        {'option': 'Blue', 'score': 5},
+        {'option': 'Black', 'score': 10},
+        {'option': 'Red', 'score': 7},
+        {'option': 'Green', 'score': 2},
+      ],
+    },
+    {
+      'question': 'What is your favorite animal?',
+      'answers': [
+        {'option': 'Rabbit', 'score': 2},
+        {'option': 'Lion', 'score': 8},
+        {'option': 'Eagle', 'score': 7},
+        {'option': 'Snake', 'score': 10},
+      ],
+    },
+    {
+      'question': 'What\'s your favourite car?',
+      'answers': [
+        {'option': 'BMW', 'score': 9},
+        {'option': 'Honda', 'score': 8},
+        {'option': 'Porsche', 'score': 10},
+        {'option': 'Lamborghini', 'score': 11},
+      ],
+    }
+  ];
   var _qIndex = 0;
-  void _answerQuestion() {
+  var _totalScore = 0;
+  void _answerQuestion(int score) {
+    _totalScore += score;
+
     setState(() {
-      if (_qIndex < 2) {
-        _qIndex++;
-      } else {
-        _qIndex = 0;
-      }
+      _qIndex++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    const questions = const [
-      {
-        'question': 'What is you favorite colour?',
-        'answers': ['Blue', 'Black', 'Red', 'Green'],
-      },
-      {
-        'question': 'What is your favorite animal?',
-        'answers': ['Rabbit', 'Lion', 'Eagle', 'Other'],
-      },
-      {
-        'question': 'What\'s your favourite car?',
-        'answers': ['BMW', 'Honda', 'Porsche', 'Lamborghini'],
-      }
-    ];
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Text('My First App'),
         ),
-        body: Column(
-          children: [
-            Question(
-              (questions[_qIndex]['question'] as String),
-            ),
-            ...(questions[_qIndex]['answers'] as List<String>).map((answer) {
-              return Answer(_answerQuestion, answer);
-            }).toList()
-          ],
-        ),
+        body: (_qIndex < _questions.length)
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                questions: _questions,
+                qIndex: _qIndex)
+            : Result(_totalScore),
       ),
     );
   }
